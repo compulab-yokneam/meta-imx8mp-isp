@@ -1,0 +1,94 @@
+From 381de0e28e21867a3bb61935e2b56ab1e1d18e37 Mon Sep 17 00:00:00 2001
+From: Valentin Raevsky <valentin@compulab.co.il>
+Date: Mon, 23 Oct 2023 06:31:13 +0000
+Subject: [PATCH 4/4] imx219 sensor enablement for linux version 6.1.22 and isp
+
+Signed-off-by: Valentin Raevsky <valentin@compulab.co.il>
+---
+ imx/run.sh       | 19 ++++++++++++++++++-
+ imx/start_isp.sh | 11 +++++++++++
+ 2 files changed, 29 insertions(+), 1 deletion(-)
+
+diff --git a/imx/run.sh b/imx/run.sh
+index 49e1a18..7ee0f6a 100755
+--- a/imx/run.sh
++++ b/imx/run.sh
+@@ -36,6 +36,8 @@ USAGE+="\tos08a20_4khdr           - single os08a20 camera on MIPI-CSI1, 3840x216
+ 
+ USAGE+="\tov5647_1080p60         - single ov5647 camera on MIPI-CSI1, 1920x1080, 60 fps\n"
+ 
++USAGE+="\timx219_1080p60         - single imx219 camera on MIPI-CSI1, 1920x1080, 60 fps\n"
++
+ # parse command line arguments
+ while [ "$1" != "" ]; do
+ 	case $1 in
+@@ -95,6 +97,12 @@ write_default_mode_files () {
+         echo "[mode.0]" >> OV5647_MODES.txt
+         echo "xml = \"OV5647_8M_02_1080p_linear.xml\"" >> OV5647_MODES.txt
+         echo "dwe = \"dewarp_config/sensor_dwe_bypass_1080P_config.json\"" >> OV5647_MODES.txt
++
++	# IMX219 modes file
++	echo -n "" > IMX219_MODES.txt
++        echo "[mode.0]" >> IMX219_MODES.txt
++        echo "xml = \"IMX219_8M_02_1080p_linear.xml\"" >> IMX219_MODES.txt
++        echo "dwe = \"dewarp_config/sensor_dwe_imx219_1080P_config.json\"" >> IMX219_MODES.txt
+ }
+ 
+ # write the sensonr config file
+@@ -202,7 +210,7 @@ load_modules () {
+ write_default_mode_files
+ 
+ echo "Trying configuration \"$ISP_CONFIG\"..."
+-MODULES_TO_REMOVE=("basler-camera-driver-vvcam" "os08a20" "ov2775" "ov5647" "${MODULES[@]}")
++MODULES_TO_REMOVE=("basler-camera-driver-vvcam" "os08a20" "ov2775" "ov5647" "imx219" "${MODULES[@]}")
+ case "$ISP_CONFIG" in
+ 		basler_4k )
+ 			MODULES=("basler-camera-driver-vvcam" "${MODULES[@]}")
+@@ -325,6 +333,15 @@ case "$ISP_CONFIG" in
+                          MODE="0"
+                          write_sensor_cfg_file "Sensor0_Entry.cfg" $CAM_NAME $DRV_FILE $MODE_FILE $MODE
+                          ;;
++		 imx219_1080p60 )
++                         MODULES=("imx219" "${MODULES[@]}")
++                         RUN_OPTION="CAMERA0"
++                         CAM_NAME="imx219"
++                         DRV_FILE="imx219.drv"
++                         MODE_FILE="IMX219_MODES.txt"
++                         MODE="0"
++                         write_sensor_cfg_file "Sensor0_Entry.cfg" $CAM_NAME $DRV_FILE $MODE_FILE $MODE
++                         ;;
+ 		 *)
+ 			echo "ISP configuration \"$ISP_CONFIG\" unsupported."
+ 			echo -e "$USAGE" >&2
+diff --git a/imx/start_isp.sh b/imx/start_isp.sh
+index cab98aa..f62bd80 100755
+--- a/imx/start_isp.sh
++++ b/imx/start_isp.sh
+@@ -11,6 +11,7 @@ NR_DEVICE_TREE_BASLER=$(grep basler-camera-vvcam `find /sys/firmware/devicetree/
+ NR_DEVICE_TREE_OV5640=$(grep ov5640 `find /sys/firmware/devicetree/base/soc@0/ -name compatible | grep i2c` -l | wc -l 2> /dev/null)
+ NR_DEVICE_TREE_OS08A20=$(grep os08a20 `find /sys/firmware/devicetree/base/soc@0/ -name compatible | grep i2c` -l | wc -l 2> /dev/null)
+ NR_DEVICE_TREE_OV5647=$(grep ov5647 `find /sys/firmware/devicetree/base/soc@0/ -name compatible | grep i2c` -l | wc -l 2> /dev/null)
++NR_DEVICE_TREE_IMX219=$(grep imx219 `find /sys/firmware/devicetree/base/soc@0/ -name compatible | grep i2c` -l | wc -l 2> /dev/null)
+ 
+ 
+ # check if the basler device has been enabled in the device tree
+@@ -52,6 +53,16 @@ elif [ $NR_DEVICE_TREE_OV5647 -eq 1 ]; then
+         # Available configurations: ov5647_1080p60
+         exec ./run.sh -c ov5647_1080p60 -lm
+ 
++# check if the imx219 device has been enabled in the device tree
++elif [ $NR_DEVICE_TREE_IMX219 -eq 1 ]; then
++
++        echo "Starting isp_media_server for Single imx219"
++
++        cd $RUNTIME_DIR
++        # Default configuration for IMX219: imx219_1080p60
++        # Available configurations: imx219_1080p60
++        exec ./run.sh -c imx219_1080p60 -lm
++
+ # check if the os08a20 device has been enabled in the device tree
+ elif [ $NR_DEVICE_TREE_OS08A20 -eq 1 ]; then
+ 
+-- 
+2.34.1
+
