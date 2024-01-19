@@ -1,0 +1,25 @@
+From ea042271d31fbcdda138f4bcb87c55913e366cf2 Mon Sep 17 00:00:00 2001
+From: Valentin Raevsky <valentin@compulab.co.il>
+Date: Sun, 21 Jan 2024 17:45:12 +0200
+Subject: [PATCH 5/5] imx219:ov5647: Add to a NON-GENERATE_PARTITION_BUILD
+
+Signed-off-by: Valentin Raevsky <valentin@compulab.co.il>
+---
+ units/isi/CMakeLists.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/units/isi/CMakeLists.txt b/units/isi/CMakeLists.txt
+index 2484612..2994ae3 100755
+--- a/units/isi/CMakeLists.txt
++++ b/units/isi/CMakeLists.txt
+@@ -80,5 +80,7 @@ add_subdirectory( drv/AR1335 )
+ #add_subdirectory( drv/OV5640 )
+ else (GENERATE_PARTITION_BUILD)
+ add_subdirectory( drv/OS08a20 )
++add_subdirectory( drv/OV5647 )
++add_subdirectory( drv/IMX219 )
+ endif (GENERATE_PARTITION_BUILD)
+ 
+-- 
+2.34.1
+
