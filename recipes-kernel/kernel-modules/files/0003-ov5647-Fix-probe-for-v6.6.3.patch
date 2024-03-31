@@ -1,0 +1,30 @@
+From 40739d034dfc40f65ae0ec3b601c80cebd5ae669 Mon Sep 17 00:00:00 2001
+From: Valentin Raevsky <valentin@compulab.co.il>
+Date: Sun, 31 Mar 2024 23:18:22 +0300
+Subject: [PATCH 3/3] ov5647: Fix probe for v6.6.3
+
+Signed-off-by: Valentin Raevsky <valentin@compulab.co.il>
+---
+ sensor/ov5647/ov5647_mipi_v3.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/sensor/ov5647/ov5647_mipi_v3.c b/sensor/ov5647/ov5647_mipi_v3.c
+index 4f1dd88..c5f3a93 100644
+--- a/sensor/ov5647/ov5647_mipi_v3.c
++++ b/sensor/ov5647/ov5647_mipi_v3.c
+@@ -767,8 +767,12 @@ static void ov5647_reset(struct ov5647 *sensor)
+ 	return;
+ }
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
++static int ov5647_probe(struct i2c_client *client)
++#else
+ static int ov5647_probe(struct i2c_client *client,
+ 			const struct i2c_device_id *id)
++#endif
+ {
+ 	int retval;
+ 	struct device *dev = &client->dev;
+-- 
+2.34.1
+
