@@ -1,25 +1,33 @@
-From ea042271d31fbcdda138f4bcb87c55913e366cf2 Mon Sep 17 00:00:00 2001
+From 0c8d30e3a6f1d7cde1cd4e381c403e2c3a71ed8c Mon Sep 17 00:00:00 2001
 From: Valentin Raevsky <valentin@compulab.co.il>
-Date: Sun, 21 Jan 2024 17:45:12 +0200
+Date: Fri, 22 Nov 2024 09:17:07 +0200
 Subject: [PATCH 5/5] imx219:ov5647: Add to a NON-GENERATE_PARTITION_BUILD
 
 Signed-off-by: Valentin Raevsky <valentin@compulab.co.il>
 ---
- units/isi/CMakeLists.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ units/isi/CMakeLists.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/units/isi/CMakeLists.txt b/units/isi/CMakeLists.txt
-index 2484612..2994ae3 100755
+index c60eef2..27d92d4 100755
 --- a/units/isi/CMakeLists.txt
 +++ b/units/isi/CMakeLists.txt
-@@ -80,5 +80,7 @@ add_subdirectory( drv/AR1335 )
- #add_subdirectory( drv/OV5640 )
- else (GENERATE_PARTITION_BUILD)
+@@ -89,6 +89,8 @@ include_directories(
+     )
+ 
  add_subdirectory( drv/OS08a20 )
 +add_subdirectory( drv/OV5647 )
 +add_subdirectory( drv/IMX219 )
+ 
+ add_custom_target(copy_shell_libs_${module} ALL
+        COMMENT "##Copy isi drv cfg to shell libs"
+@@ -100,4 +102,4 @@ add_dependencies(copy_shell_libs_${module} drv/OS08a20)
  endif (GENERATE_PARTITION_BUILD)
  
+ # create common targets for this module
+-include(${UNITS_TOP_DIRECTORY}/targets.cmake)
+\ No newline at end of file
++include(${UNITS_TOP_DIRECTORY}/targets.cmake)
 -- 
 2.34.1
 
