@@ -1,0 +1,50 @@
+From 7950f392463fb371c5da3cce4815e1f5cd43bb12 Mon Sep 17 00:00:00 2001
+From: Valentin Raevsky <valentin@compulab.co.il>
+Date: Fri, 22 Nov 2024 09:40:54 +0200
+Subject: [PATCH 6/6] Fix CMakeLists.txt files
+
+Signed-off-by: Valentin Raevsky <valentin@compulab.co.il>
+---
+ units/isi/drv/IMX219/CMakeLists.txt | 2 --
+ units/isi/drv/OV5647/CMakeLists.txt | 2 --
+ 2 files changed, 4 deletions(-)
+
+diff --git a/units/isi/drv/IMX219/CMakeLists.txt b/units/isi/drv/IMX219/CMakeLists.txt
+index f2e8b36..3bbddb2 100644
+--- a/units/isi/drv/IMX219/CMakeLists.txt
++++ b/units/isi/drv/IMX219/CMakeLists.txt
+@@ -48,13 +48,11 @@ add_custom_target(${module}.drv
+                   )
+ endif()
+ 
+-if(${APPMODE} STREQUAL NATIVE)
+ add_custom_target(${module}.init
+                   ALL
+ 		  DEPENDS ${module}_shared
+                   COMMENT "Copying ${module} init files"
+                   )
+-endif (${APPMODE} STREQUAL NATIVE)
+ 
+ # define lib dependencies
+ #target_link_libraries(${module}_static
+diff --git a/units/isi/drv/OV5647/CMakeLists.txt b/units/isi/drv/OV5647/CMakeLists.txt
+index b660ad4..b9c369d 100644
+--- a/units/isi/drv/OV5647/CMakeLists.txt
++++ b/units/isi/drv/OV5647/CMakeLists.txt
+@@ -48,13 +48,11 @@ add_custom_target(${module}.drv
+                   )
+ endif()
+ 
+-if(${APPMODE} STREQUAL NATIVE)
+ add_custom_target(${module}.init
+                   ALL
+ 		  DEPENDS ${module}_shared
+                   COMMENT "Copying ${module} init files"
+                   )
+-endif (${APPMODE} STREQUAL NATIVE)
+ 
+ # define lib dependencies
+ #target_link_libraries(${module}_static
+-- 
+2.34.1
+

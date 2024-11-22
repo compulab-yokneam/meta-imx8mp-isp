@@ -5,6 +5,7 @@ SRC_URI += "file://0002-ov5647-sensor-enablement-for-linux-version-6.1.55-an.pat
 SRC_URI += "file://0003-imx219-sensor-enablement-for-linux-version-6.1.55-an.patch"
 SRC_URI += "file://0004-imx219-sensor-enablement-for-linux-version-6.1.55-an.patch"
 SRC_URI += "file://0005-imx219-ov5647-Add-to-a-NON-GENERATE_PARTITION_BUILD.patch "
+SRC_URI += "file://0006-Fix-CMakeLists.txt-files.patch "
 
 FILES_SOLIBS_VERSIONED += " \
     ${libdir}/libimx219.so \
