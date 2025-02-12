@@ -1,0 +1,60 @@
+From 8ef06da82d36e091da6fe19f2a51fe48664a0539 Mon Sep 17 00:00:00 2001
+From: Valentin Raevsky <valentin@compulab.co.il>
+Date: Wed, 12 Feb 2025 18:21:54 +0200
+Subject: [PATCH] Add dual_imx219_1080p60 config support
+
+Signed-off-by: Valentin Raevsky <valentin@compulab.co.il>
+---
+ imx/run.sh       | 11 +++++++++++
+ imx/start_isp.sh |  9 +++++++++
+ 2 files changed, 20 insertions(+)
+
+diff --git a/imx/run.sh b/imx/run.sh
+index 3b27bbc..5feb145 100755
+--- a/imx/run.sh
++++ b/imx/run.sh
+@@ -35,6 +35,7 @@ USAGE+="\tdual_os08a20_1080p30hdr - dual os08a20 cameras on MIPI-CSI1/2, 1920x10
+ USAGE+="\tos08a20_4khdr           - single os08a20 camera on MIPI-CSI1, 3840x2160, 15 fps, HDR configuration\n"
+ USAGE+="\tov5647_1080p60          - single ov5647 camera on MIPI-CSI1, 1920x1080, 60 fps\n"
+ USAGE+="\timx219_1080p60          - single imx219 camera on MIPI-CSI1, 1920x1080, 60 fps\n"
++USAGE+="\tdual_imx219_1080p60     - dual imx219 camera on MIPI-CSI1/2, 1920x1080, 60 fps\n"
+ 
+ # parse command line arguments
+ while [ "$1" != "" ]; do
+@@ -340,6 +341,16 @@ case "$ISP_CONFIG" in
+                          MODE="0"
+                          write_sensor_cfg_file "Sensor0_Entry.cfg" $CAM_NAME $DRV_FILE $MODE_FILE $MODE
+                          ;;
++		 dual_imx219_1080p60 )
++                         MODULES=("imx219" "${MODULES[@]}")
++                         RUN_OPTION="DUAL_CAMERA"
++                         CAM_NAME="imx219"
++                         DRV_FILE="imx219.drv"
++                         MODE_FILE="IMX219_MODES.txt"
++                         MODE="0"
++                         write_sensor_cfg_file "Sensor0_Entry.cfg" $CAM_NAME $DRV_FILE $MODE_FILE $MODE
++                         write_sensor_cfg_file "Sensor1_Entry.cfg" $CAM_NAME $DRV_FILE $MODE_FILE $MODE
++                         ;;
+ 		 *)
+ 			echo "ISP configuration \"$ISP_CONFIG\" unsupported."
+ 			echo -e "$USAGE" >&2
+diff --git a/imx/start_isp.sh b/imx/start_isp.sh
+index f62bd80..7957293 100755
+--- a/imx/start_isp.sh
++++ b/imx/start_isp.sh
+@@ -63,6 +63,15 @@ elif [ $NR_DEVICE_TREE_IMX219 -eq 1 ]; then
+         # Available configurations: imx219_1080p60
+         exec ./run.sh -c imx219_1080p60 -lm
+ 
++elif [ $NR_DEVICE_TREE_IMX219 -eq 2 ]; then
++
++        echo "Starting isp_media_server for Dual imx219"
++
++        cd $RUNTIME_DIR
++        # Default configuration for IMX219: imx219_1080p60
++        # Available configurations: imx219_1080p60
++        exec ./run.sh -c dual_imx219_1080p60 -lm
++
+ # check if the os08a20 device has been enabled in the device tree
+ elif [ $NR_DEVICE_TREE_OS08A20 -eq 1 ]; then
+ 
